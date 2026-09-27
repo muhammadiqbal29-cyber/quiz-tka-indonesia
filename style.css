@@ -779,3 +779,48 @@ p {
 .filter-btn.active:hover {
     background: var(--primary-color);
 }
+
+/* Monster Avatars */
+.monster-avatar {
+    width: 120px;
+    height: 120px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    margin-bottom: 10px;
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 0 15px rgba(136, 84, 192, 0.5);
+}
+
+.mini-avatar {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    border: 2px solid var(--primary-color);
+}
+
+.bouncing {
+    animation: monsterBounce 2s infinite ease-in-out;
+}
+
+@keyframes monsterBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Multi-select selected state */
+.option-btn.selected {
+    box-shadow: 0 0 0 4px #fff, 0 6px 0 var(--primary-shadow) !important;
+    transform: translateY(2px);
+    filter: brightness(1.2);
+}
+.option-btn.selected::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.2rem;
+    color: white;
+}

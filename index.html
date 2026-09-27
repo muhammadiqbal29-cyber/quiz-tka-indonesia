@@ -28,6 +28,9 @@
                 <div class="stat-pill"><i class="fa-solid fa-star"></i> 3000 Poin Maks</div>
             </div>
             <div class="name-input-container">
+                <!-- Monster Avatar -->
+                <img id="monster-avatar-start" src="https://robohash.org/peserta?set=set2&size=120x120" alt="Monster Lucu" class="monster-avatar bouncing" />
+                
                 <label for="player-name"><i class="fa-solid fa-user"></i> Nama Peserta</label>
                 <input type="text" class="name-input" id="player-name" placeholder="Ketik namamu di sini..." maxlength="40" autocomplete="off">
             </div>
@@ -43,7 +46,10 @@
                     <div class="progress-bar" id="progress-bar"></div>
                 </div>
                 <div class="game-stats">
-                    <div class="question-counter" id="question-counter">1 / 30</div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <img id="monster-avatar-game" src="https://robohash.org/peserta?set=set2&size=40x40" alt="Avatar" class="mini-avatar" />
+                        <div class="question-counter" id="question-counter">1 / 30</div>
+                    </div>
                     <div id="streak-container" style="display:none;" class="streak-display">
                         <i class="fa-solid fa-fire"></i> <span id="streak-count">0</span>
                     </div>

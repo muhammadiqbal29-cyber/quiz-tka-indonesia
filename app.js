@@ -80,6 +80,9 @@ const backToResultBtn = document.getElementById('back-to-result-btn');
 const soundToggle = document.getElementById('sound-toggle');
 const playerNameInput = document.getElementById('player-name');
 
+const monsterAvatarStart = document.getElementById('monster-avatar-start');
+const monsterAvatarGame = document.getElementById('monster-avatar-game');
+
 const questionText = document.getElementById('question-text');
 const optionsContainer = document.getElementById('options-container');
 const progressBar = document.getElementById('progress-bar');
@@ -131,6 +134,16 @@ function init() {
     backToResultBtn.addEventListener('click', () => switchScreen('result'));
     soundToggle.addEventListener('click', toggleSound);
 
+    // Update avatar as user types
+    let debounceTimer;
+    playerNameInput.addEventListener('input', (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            const val = e.target.value.trim() || 'peserta';
+            monsterAvatarStart.src = `https://robohash.org/${encodeURIComponent(val)}?set=set2&size=120x120`;
+        }, 500);
+    });
+
     // Review filter buttons
     reviewFilters.addEventListener('click', (e) => {
         const btn = e.target.closest('.filter-btn');
@@ -171,12 +184,13 @@ function startGame() {
     score = 0;
     correctCount = 0;
     incorrectCount = 0;
-    streak = 0;
-    maxStreak = 0;
     userAnswers = [];
     scoreDisplay.innerText = score;
     streakContainer.style.display = 'none';
     startTime = new Date();
+
+    // Set game header avatar
+    monsterAvatarGame.src = `https://robohash.org/${encodeURIComponent(playerName)}?set=set2&size=40x40`;
 
     SFX.gameStart();
     switchScreen('game');
@@ -233,6 +247,8 @@ function handleAnswer(selectedBtn, selectedLetter, correctLetter) {
     if (isAnswering) return;
     isAnswering = true;
 
+    SFX.click();
+
     const isCorrect = selectedLetter === correctLetter;
 
     userAnswers.push({
@@ -242,17 +258,19 @@ function handleAnswer(selectedBtn, selectedLetter, correctLetter) {
         isCorrect: isCorrect
     });
 
-    // Visual + audio feedback
+    // Visual + audio feedback: 1 green, the rest red
     const allBtns = document.querySelectorAll('.option-btn');
+    
     allBtns.forEach(btn => {
         btn.disabled = true;
+        btn.classList.remove('selected');
 
-        if (btn.dataset.letter === correctLetter) {
-            btn.classList.add('correct-anim');
-        } else if (btn === selectedBtn && !isCorrect) {
-            btn.classList.add('incorrect-anim');
+        const btnLetter = btn.dataset.letter;
+
+        if (btnLetter === correctLetter) {
+            btn.classList.add('correct-anim'); // turns green
         } else {
-            btn.classList.add('fade-out');
+            btn.classList.add('incorrect-anim'); // turns red
         }
     });
 
@@ -291,7 +309,7 @@ function handleAnswer(selectedBtn, selectedLetter, correctLetter) {
         } else {
             endGame();
         }
-    }, 1800);
+    }, 2000);
 }
 
 function showFeedback(emoji) {
