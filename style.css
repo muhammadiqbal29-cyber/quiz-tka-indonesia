@@ -8,15 +8,15 @@
     --incorrect-color: #e21b3c;
     --incorrect-shadow: #b3152f;
 
-    /* Option colors */
-    --opt-1: #e21b3c;
-    --opt-1-shadow: #b3152f;
-    --opt-2: #1368ce;
-    --opt-2-shadow: #0f52a3;
-    --opt-3: #d89e00;
-    --opt-3-shadow: #ab7d00;
-    --opt-4: #26890c;
-    --opt-4-shadow: #1e6c09;
+    /* Option colors (Neutral/Different colors before answering) */
+    --opt-1: #1368ce; /* Blue */
+    --opt-1-shadow: #0f52a3;
+    --opt-2: #8e44ad; /* Purple */
+    --opt-2-shadow: #6c3483;
+    --opt-3: #e67e22; /* Orange */
+    --opt-3-shadow: #b9651b;
+    --opt-4: #e84393; /* Pink */
+    --opt-4-shadow: #b83675;
 
     --panel-bg: rgba(255, 255, 255, 0.1);
     --panel-border: rgba(255, 255, 255, 0.2);
