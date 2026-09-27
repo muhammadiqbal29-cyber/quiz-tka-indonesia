@@ -489,6 +489,52 @@ p {
     align-items: center;
     z-index: 200;
     pointer-events: none;
+    background: rgba(0, 0, 0, 0.7);
+    animation: fadeInMeme 0.3s ease-out forwards;
+}
+
+@keyframes fadeInMeme {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.meme-container {
+    background: white;
+    padding: 15px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    transform: scale(0.5);
+    animation: popMeme 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popMeme {
+    to { transform: scale(1); }
+}
+
+.meme-correct { border: 6px solid #4ade80; }
+.meme-wrong { border: 6px solid #f87171; }
+
+.meme-text {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.meme-correct .meme-text { color: #4ade80; }
+.meme-wrong .meme-text { color: #f87171; }
+
+.meme-img {
+    max-width: 90vw;
+    max-height: 50vh;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+.feedback-emoji {
+    font-size: 6rem;
+    filter: drop-shadow(0 0 30px rgba(0,0,0,0.5));
     animation: feedbackPop 0.6s ease-out forwards;
 }
 
@@ -496,11 +542,6 @@ p {
     0% { opacity: 0; transform: scale(0.5); }
     40% { opacity: 1; transform: scale(1.2); }
     100% { opacity: 0; transform: scale(1.4); }
-}
-
-.feedback-emoji {
-    font-size: 6rem;
-    filter: drop-shadow(0 0 30px rgba(0,0,0,0.5));
 }
 
 /* Result Screen */

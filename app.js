@@ -116,6 +116,9 @@ let isAnswering = false;
 let playerName = '';
 let startTime = null;
 
+let preloadedYesMeme = '';
+let preloadedNoMeme = '';
+
 const optionShapes = [
     '<i class="fa-solid fa-play" style="transform: rotate(-90deg);font-size:0.7rem"></i>',
     '<i class="fa-solid fa-square" style="font-size:0.7rem"></i>',
@@ -124,9 +127,29 @@ const optionShapes = [
 ];
 
 // ═══════════════════════════════════════════
+//  Meme API (yesno.wtf)
+// ═══════════════════════════════════════════
+async function preloadMemes() {
+    try {
+        const [yesRes, noRes] = await Promise.all([
+            fetch('https://yesno.wtf/api?force=yes'),
+            fetch('https://yesno.wtf/api?force=no')
+        ]);
+        const yesData = await yesRes.json();
+        const noData = await noRes.json();
+        preloadedYesMeme = yesData.image;
+        preloadedNoMeme = noData.image;
+    } catch (e) {
+        console.error('Failed to preload memes:', e);
+    }
+}
+
+// ═══════════════════════════════════════════
 //  Initialization
 // ═══════════════════════════════════════════
 function init() {
+    preloadMemes();
+    
     startBtn.addEventListener('click', startGame);
     restartBtn.addEventListener('click', resetGame);
     reviewBtn.addEventListener('click', showReview);
@@ -291,7 +314,7 @@ function handleAnswer(selectedBtn, selectedLetter, correctLetter) {
             streakCount.innerText = streak;
         }
 
-        showFeedback('✅');
+        showMemeFeedback(true);
         animateValue(scoreDisplay, score - earned, score, 500);
     } else {
         incorrectCount++;
@@ -299,7 +322,7 @@ function handleAnswer(selectedBtn, selectedLetter, correctLetter) {
         streakContainer.style.display = 'none';
 
         SFX.incorrect();
-        showFeedback('❌');
+        showMemeFeedback(false);
     }
 
     setTimeout(() => {
@@ -309,15 +332,35 @@ function handleAnswer(selectedBtn, selectedLetter, correctLetter) {
         } else {
             endGame();
         }
-    }, 2000);
+    }, 3000); // Wait 3s to show meme
 }
 
-function showFeedback(emoji) {
+function showMemeFeedback(isCorrect) {
     const overlay = document.createElement('div');
-    overlay.className = 'feedback-overlay';
-    overlay.innerHTML = `<span class="feedback-emoji">${emoji}</span>`;
+    overlay.className = 'feedback-overlay meme-overlay';
+    
+    const memeUrl = isCorrect ? preloadedYesMeme : preloadedNoMeme;
+    const fallbackEmoji = isCorrect ? '✅' : '❌';
+    
+    if (memeUrl) {
+        overlay.innerHTML = `
+            <div class="meme-container ${isCorrect ? 'meme-correct' : 'meme-wrong'}">
+                <h2 class="meme-text">${isCorrect ? 'BENAR!' : 'SALAH!'}</h2>
+                <img src="${memeUrl}" class="meme-img" alt="Meme" />
+            </div>
+        `;
+    } else {
+        // Fallback if API fails
+        overlay.innerHTML = `<span class="feedback-emoji">${fallbackEmoji}</span>`;
+    }
+    
     document.body.appendChild(overlay);
-    setTimeout(() => overlay.remove(), 700);
+    
+    setTimeout(() => {
+        overlay.remove();
+        // Preload next memes for next question
+        preloadMemes();
+    }, 2800);
 }
 
 // ═══════════════════════════════════════════
