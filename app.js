@@ -75,7 +75,6 @@ const screens = {
 const startBtn = document.getElementById('start-btn');
 const restartBtn = document.getElementById('restart-btn');
 const reviewBtn = document.getElementById('review-btn');
-const downloadBtn = document.getElementById('download-btn');
 const backToResultBtn = document.getElementById('back-to-result-btn');
 const soundToggle = document.getElementById('sound-toggle');
 const playerNameInput = document.getElementById('player-name');
@@ -153,7 +152,6 @@ function init() {
     startBtn.addEventListener('click', startGame);
     restartBtn.addEventListener('click', resetGame);
     reviewBtn.addEventListener('click', showReview);
-    downloadBtn.addEventListener('click', downloadResults);
     backToResultBtn.addEventListener('click', () => switchScreen('result'));
     soundToggle.addEventListener('click', toggleSound);
 
@@ -498,95 +496,6 @@ function filterReview(filter) {
 function showReview() {
     SFX.click();
     switchScreen('review');
-}
-
-// ═══════════════════════════════════════════
-//  Download / Export Results
-// ═══════════════════════════════════════════
-function downloadResults() {
-    SFX.click();
-
-    const endTime = new Date();
-    const durationMs = endTime - startTime;
-    const durationMin = Math.floor(durationMs / 60000);
-    const durationSec = Math.floor((durationMs % 60000) / 1000);
-
-    const pct = Math.round((correctCount / quizData.length) * 100);
-
-    let txt = '';
-    txt += '═══════════════════════════════════════════\n';
-    txt += '  HASIL KUIS TKA BAHASA INDONESIA SD\n';
-    txt += '  Prediksi Soal Paket 1\n';
-    txt += '═══════════════════════════════════════════\n\n';
-    txt += `Nama Peserta  : ${playerName}\n`;
-    txt += `Tanggal       : ${endTime.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}\n`;
-    txt += `Waktu Mulai   : ${startTime.toLocaleTimeString('id-ID')}\n`;
-    txt += `Waktu Selesai : ${endTime.toLocaleTimeString('id-ID')}\n`;
-    txt += `Durasi        : ${durationMin} menit ${durationSec} detik\n\n`;
-    txt += `───────────────────────────────────────────\n`;
-    txt += `  SKOR       : ${score} poin\n`;
-    txt += `  BENAR      : ${correctCount} dari ${quizData.length} soal (${pct}%)\n`;
-    txt += `  SALAH      : ${incorrectCount} soal\n`;
-    txt += `  MAX STREAK : ${maxStreak}\n`;
-    txt += `───────────────────────────────────────────\n\n`;
-
-    // Category summary
-    const catMap = {};
-    userAnswers.forEach((ans) => {
-        const cat = ans.questionData.category || 'Umum';
-        if (!catMap[cat]) catMap[cat] = { total: 0, correct: 0, wrong: 0, wrongQs: [] };
-        catMap[cat].total++;
-        if (ans.isCorrect) catMap[cat].correct++;
-        else { catMap[cat].wrong++; catMap[cat].wrongQs.push(ans.questionIndex + 1); }
-    });
-
-    txt += '📊 ANALISIS PER KATEGORI\n';
-    txt += '───────────────────────────────────────────\n';
-    Object.entries(catMap).sort((a,b) => b[1].wrong - a[1].wrong).forEach(([cat, data]) => {
-        const status = data.wrong > 0 ? `❌ ${data.correct}/${data.total} — Salah: No. ${data.wrongQs.join(', ')}` : `✅ ${data.correct}/${data.total}`;
-        txt += `  ${cat}: ${status}\n`;
-    });
-    txt += '\n';
-
-    // Detail per question
-    txt += '📝 DETAIL JAWABAN\n';
-    txt += '───────────────────────────────────────────\n';
-    userAnswers.forEach((ans, i) => {
-        const qData = ans.questionData;
-        // Strip HTML from question for plain text
-        const plainQ = qData.question
-            .replace(/<div class="passage[^"]*">.*?<\/div>/gs, '[Teks Bacaan] ')
-            .replace(/<[^>]+>/g, '')
-            .replace(/\s+/g, ' ')
-            .trim();
-
-        const correctOptText = qData.options.find(o => o.startsWith(qData.answer + '.')) || qData.answer;
-        const userOptText = qData.options.find(o => o.startsWith(ans.userLetter + '.')) || ans.userLetter;
-        const icon = ans.isCorrect ? '✅' : '❌';
-
-        txt += `\n${i + 1}. [${qData.category || '-'}] ${plainQ}\n`;
-        txt += `   Jawaban Anda : ${userOptText}\n`;
-        if (!ans.isCorrect) {
-            txt += `   Jawaban Benar: ${correctOptText}\n`;
-        }
-        txt += `   ${icon}\n`;
-    });
-
-    txt += '\n═══════════════════════════════════════════\n';
-    txt += `  Digenerate otomatis pada ${endTime.toLocaleString('id-ID')}\n`;
-    txt += '═══════════════════════════════════════════\n';
-
-    // Create and trigger download
-    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const safeName = playerName.replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '_');
-    a.href = url;
-    a.download = `Hasil_TKA_BI_${safeName}_${endTime.toISOString().slice(0,10)}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
 }
 
 // ═══════════════════════════════════════════
